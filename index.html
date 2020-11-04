@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Mixin名片</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-size: 16px;
+        font-family: 'Quicksand', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        box-sizing: border-box;
+        height: 100vh;
+      }
+      a {
+        text-decoration: none;
+        color: #135d98;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      body {
+        color: #2c3e50;
+        background: url('https://mixin.one/assets/4aa9012849cc84b35004a005ab43ca2a.jpg')
+          #366bd5;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 6rem 1rem 2rem;
+
+        box-sizing: border-box;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 760px) {
+        .wrapper {
+          padding: 2rem 1rem 2rem;
+        }
+        body {
+          background: #366bd5;
+        }
+        html {
+          font-size: 14px;
+        }
+      }
+
+      .qrcode-img {
+        user-select: none;
+        display: block;
+        width: 12rem;
+        margin: 0 auto;
+      }
+      .card {
+        position: relative;
+        background: #fff;
+        border-radius: 0.5rem;
+        padding: 2rem 1rem 2rem;
+        text-align: center;
+        font-size: 1rem;
+      }
+      .avatar {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 6rem;
+        border: 2px solid #fff;
+        background: #fafafa;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      .avatar-img {
+        width: 6rem;
+        height: 6rem;
+        margin: 0 auto;
+      }
+      .qrcode-toggle {
+        user-select: none;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        font-size: 0.9rem;
+      }
+      .name {
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .id {
+        color: #555;
+      }
+      .hide {
+        display: none;
+      }
+      .guide {
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+        color: #fff;
+      }
+      .guide a {
+        color: #fff;
+        text-decoration: underline;
+      }
+      .guide span {
+        margin-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="card">
+        <div class="qrcode-toggle" id="qrToggle">
+          <a id="tt">转账</a>
+          <a id="tc" class="hide">联系</a>
+        </div>
+        <div class="avatar">
+          <img class="avatar-img" src="`+swapUser.AvatarURL+`" alt="头像" />
+        </div>
+        <div class="name">`+swapUser.Name+`</div>
+        <div class="id">`+swapUser.Id+`</div>
+        <div class="qrcode">
+          <div id="qc">
+            <img
+              class="qrcode-img"
+              src="`+swapUser.UserQrcode+`"
+              alt="个人二维码"
+            />
+          </div>
+          <div id="qt" class="hide">
+            <img
+              class="qrcode-img"
+              src="`+swapUser.TransferQrcode+`"
+              alt="转账二维码"
+            />
+          </div>
+        </div>
+        <div class="uuid">`+swapUser.MixinId+`</div>
+        <div class="reg">
+          注册于: `+strings.Split(swapUser.RegTime, ".")[0]+`
+        </div>
+      </div>
+      <div class="guide">
+        下载
+        <a href="https://mixin.one/messenger" target="_blank">Mixin Messenger</a
+        ><span
+          >，以下任一方式可建立联系: 1. APP 内搜索 <b>`+swapUser.Id+`</b></span
+        >
+        <span>2. 使用 APP 扫码</span>
+        <span>3. APP 内打开当前链接直达</span>
+      </div>
+    </div>
+    <script>
+      let inMixin = false
+      if (
+        window.webkit &&
+        window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.MixinContext
+      ) {
+        inMixin = prompt('MixinContext.getContext()')
+      }
+      if (window.MixinContext && window.MixinContext.getContext) {
+        inMixin = window.MixinContext.getContext()
+        const inMixinData = JSON.parse(inMixin)
+        if (inMixinData.platform === 'Desktop') {
+          inMixin = false
+        }
+      }
+      if (inMixin) {
+        window.open('mixin://users/`+swapUser.MixinId+`')
+      }
+      document.getElementById('qrToggle').onclick = () => {
+        if (document.getElementById('tc').className === 'hide') {
+          document.getElementById('tc').className = ''
+          document.getElementById('tt').className = 'hide'
+          document.getElementById('qc').className = 'hide'
+          document.getElementById('qt').className = ''
+        } else {
+          document.getElementById('tt').className = ''
+          document.getElementById('tc').className = 'hide'
+          document.getElementById('qt').className = 'hide'
+          document.getElementById('qc').className = ''
+        }
+      }
+    </script>
+  </body>
+</html>
